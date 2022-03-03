@@ -1,6 +1,6 @@
 - clean: ['~', '~/.oh-my-zsh/custom/'] 
 
-- create: ['~/oh-my-zsh/custom/plugins', '~/oh-my-zsh/custom/themes']
+- create: ['~/.oh-my-zsh/custom/plugins', '~/.oh-my-zsh/custom/themes']
 
 - shell:
     - [sh pre-install.sh, Running setup script]
