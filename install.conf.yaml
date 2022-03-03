@@ -1,10 +1,11 @@
-- clean: ['~', '~/.oh-my-zsh/custom/', '~/.oh-my-zsh/custom/plugs/']
+- clean: ['~', '~/.oh-my-zsh/custom/'] 
 
+- create:
+        - ~/oh-my-zsh/custom/plugins
+        - ~/oh-my-zsh/custom/themes
+        - ~/
 - shell:
         - [sh pre-install.sh, Running setup script]
-        - [mkdir -p ~/oh-my-zsh/custom/, creating zsh custom folders]
-        - [mkdir -p ~/oh-mh-zsh/custom/themes] 
-        - [mkdir -p ~/oh-my-zsh/custom/plugins]
         - [git submodule update --init --recursive, Installing submodules]
         - [sh fonts/install.sh, Installing Powerline fonts]
         
