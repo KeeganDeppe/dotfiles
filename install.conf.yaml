@@ -3,9 +3,18 @@
 - create:
         - ~/oh-my-zsh/custom/plugins
         - ~/oh-my-zsh/custom/themes
-        - ~/
 - shell:
         - [sh pre-install.sh, Running setup script]
         - [git submodule update --init --recursive, Installing submodules]
         - [sh fonts/install.sh, Installing Powerline fonts]
-        
+#at this point, we should have clean folders set up for oh my zsh and should have fonts installed 
+#now we need to start creating links and then perform any other installation stuff
+
+- link: 
+        - ~/.dotfiles: ''
+        - ~/.vim: vim/
+        - ~/.vimrc: vimrc
+        - ~/.zshrc:
+                force: true
+                path: zshrc
+        - ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh_theme
