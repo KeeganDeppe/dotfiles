@@ -1,17 +1,24 @@
 - clean: ['~', '~/.oh-my-zsh/custom/'] 
 
-- create: ['~/.oh-my-zsh/custom/plugins', '~/.oh-my-zsh/custom/themes']
-
 - shell:
     - [sh pre-install.sh, Running setup script]
     - [git submodule update --init --recursive, Installing submodules]
     - [sh fonts/install.sh, Installing Powerline fonts]
 
 - link: 
-    ~/.dotfiles: ''
-    ~/.vim: vim/
-    ~/.vimrc: vimrc
+    ~/.dotfiles:
+        force: true
+        path: ''
+    ~/.vim:
+        relink: true
+        path: vim
+    ~/.vimrc: 
+        relink: true
+        path: vimrc
     ~/.zshrc:
         force: true
         path: zshrc
-    ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+    ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme:
+        create: true
+        relink: true 
+        path: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
