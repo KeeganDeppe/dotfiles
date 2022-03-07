@@ -8,3 +8,6 @@
 [submodule "oh-my-zsh/custom/themes/powerlevel10k"]
 	path = oh-my-zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
+[submodule "vim/onehalf"]
+	path = vim/onehalf
+	url = https://github.com/sonph/onehalf.git
