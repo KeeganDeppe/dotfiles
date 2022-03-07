@@ -6,5 +6,6 @@ set expandtab
 
 
 " setting color theme stuff
+syntax enable
 colorscheme onehalfdark
 
