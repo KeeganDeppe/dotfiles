@@ -18,3 +18,4 @@
         force: true
         path: zshrc
     ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
+    ~/.vim/colors/onehalf: vim/colors/onehalf

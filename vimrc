@@ -4,3 +4,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
+
+" setting color theme stuff
+colorscheme onehalfdark
+

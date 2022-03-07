@@ -9,5 +9,5 @@
 	path = oh-my-zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
 [submodule "vim/onehalf"]
-	path = vim/onehalf
+	path = vim/colors/onehalf
 	url = https://github.com/sonph/onehalf.git
