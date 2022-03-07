@@ -12,7 +12,6 @@
 
 - link: 
     ~/.dotfiles: ''
-    ~/.vim: vim/
     ~/.vimrc: vimrc
     ~/.zshrc:
         force: true
