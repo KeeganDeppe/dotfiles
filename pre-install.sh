@@ -8,7 +8,7 @@ else
 	echo "Consider updating oh-my-zsh using: omz update"
 fi
 
-if [ -n "$ZSH_NAME" ]; then
+if [ -n $ZSH_NAME ]; then
 	echo "Changing default shell to zsh"
 	chsh -s /bin/zsh 
 else
