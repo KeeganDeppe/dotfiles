@@ -1,0 +1,1 @@
+/home/kdeppe/dotfiles/vim/onehalf/vim/colors/onehalfdark.vim
