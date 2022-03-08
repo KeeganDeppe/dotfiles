@@ -11,3 +11,6 @@
 [submodule "vim/onehalf"]
 	path = vim/onehalf
 	url = https://github.com/sonph/onehalf.git
+[submodule "oh-my-zsh/custom/plugins/zsh-autosuggestions"]
+	path = oh-my-zsh/custom/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
