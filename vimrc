@@ -4,6 +4,8 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 
+" basics
+set number
 
 " setting color theme stuff
 set background=dark
