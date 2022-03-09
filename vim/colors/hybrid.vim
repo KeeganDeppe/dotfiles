@@ -1,0 +1,1 @@
+/home/kdeppe/dotfiles/vim/vim-hybrid/colors/hybrid.vim
