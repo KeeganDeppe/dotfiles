@@ -6,6 +6,7 @@ set expandtab
 
 
 " setting color theme stuff
+set background=dark
 syntax enable
-colorscheme hybrid.vim
+colorscheme hybrid
 
