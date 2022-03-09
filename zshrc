@@ -116,7 +116,7 @@ source $ZSH/oh-my-zsh.sh
 alias ifconfig="/sbin/ifconfig"
 # git stuff
 alias gadd="git add ."
-alias gbug="git add . && git commit-m 'bug fixes'"
+alias gbug="git add . && git commit -m 'bug fixes'"
 alias gp="git push"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
