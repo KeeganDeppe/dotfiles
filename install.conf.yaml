@@ -20,6 +20,6 @@
         force: true
         path: oh-my-zsh/custom/plugins/zsh-autosuggestions
     ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
-    ~/.vim/colors/onehalfdark.vim: vim/onehalf/vim/colors/onehalfdark.vim
+    ~/.vim/colors/hybrid.vim: vim/vim-hybrid/colors/hybrid.vim
     ~/.tmux.conf: tmux.conf
 
