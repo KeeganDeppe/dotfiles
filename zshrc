@@ -118,5 +118,9 @@ alias ifconfig="/sbin/ifconfig"
 alias gadd="git add ."
 alias gbug="git add . && git commit -m 'bug fixes'"
 alias gp="git push"
+
+# bb ip remove
+alias bbrm='ssh-keygen -f "/home/kdeppe/.ssh/known_hosts" -R "192.168.7.2"'
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
