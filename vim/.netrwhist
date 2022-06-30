@@ -1,3 +1,12 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =1
+let g:netrw_dirhistcnt =0
+let g:netrw_dirhist_0='/home/kdeppe/FRMS/internal/pkg/server'
+let g:netrw_dirhist_9='/home/kdeppe/dotfiles/vim'
+let g:netrw_dirhist_8='/home/kdeppe/FRMS/cmd/server'
+let g:netrw_dirhist_7='/home/kdeppe/FRMS/internal/configs'
+let g:netrw_dirhist_6='/home/kdeppe/FRMS/internal/pkg/system'
+let g:netrw_dirhist_5='/home/kdeppe/FRMS/internal/pkg/sensor'
+let g:netrw_dirhist_4='/home/kdeppe/FRMS/internal/pkg'
+let g:netrw_dirhist_3='/home/kdeppe/FRMS/internal/pkg/I2C'
+let g:netrw_dirhist_2='/home/kdeppe/FRMS/cmd'
 let g:netrw_dirhist_1='/home/kdeppe/dotfiles/vim'

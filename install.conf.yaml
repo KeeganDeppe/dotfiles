@@ -6,9 +6,7 @@
 - clean: ['~', '~/.oh-my-zsh/custom/'] 
 
 - shell:
-    - [sh pre-install.sh, Running setup script]
     - [git submodule update --init --recursive, Installing submodules]
-    - [sh fonts/install.sh, Installing Powerline fonts]
 
 - link: 
     ~/.dotfiles: ''
