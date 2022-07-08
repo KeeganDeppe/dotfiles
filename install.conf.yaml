@@ -9,7 +9,9 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link: 
-  #~/.dotfiles: '' copied as .dotfiles
+<<<<<<< HEAD
+#    ~/.dotfiles: ''
+>>>>>>> 9147eddc36c12e1aa008d3e55792c7b766d04a38
     ~/.vimrc: vimrc
     ~/.zshrc:
         force: true
