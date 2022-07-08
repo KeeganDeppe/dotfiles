@@ -17,9 +17,6 @@
 [submodule "vim/vim-hybrid"]
 	path = vim/vim-hybrid
 	url = https://github.com/w0ng/vim-hybrid.git
-[submodule "vim/pack/man/nerdtree"]
-	path = vim/pack/man/nerdtree
-	url = https://github.com/preservim/nerdtree.git
 [submodule "vim/pack/man/start/nerdtree"]
 	path = vim/pack/man/start/nerdtree
 	url = https://github.com/preservim/nerdtree.git
