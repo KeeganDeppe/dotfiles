@@ -31,3 +31,12 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFocus<CR>
 
+" time to learn vim
+noremap <up> :echoerr "Umm, use k instead"<cr>
+noremap <down>:echoerr "Umm,use j instead"<cr>
+noremap <left>:echoerr "Umm,use h instead"<cr>
+noremap <right>:echoerr "Umm,use l instead"<cr>
+inoremap <up> <NOP>
+inoremap <down> <NOP>
+inoremap <left> <NOP>
+inoremap <right> <NOP>

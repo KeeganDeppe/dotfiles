@@ -2,26 +2,25 @@
     link:
         relink: true
         create: true
+        glob: true
 
-- clean: ['~', '~/.oh-my-zsh/custom/'] 
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]
+- clean: ['~', '~/.oh-my-zsh/custom/', '~/.vim', '~/.tmux']
 
 - link: 
-<<<<<<< HEAD
-#    ~/.dotfiles: ''
->>>>>>> 9147eddc36c12e1aa008d3e55792c7b766d04a38
-    ~/.vimrc: vimrc
+    ~/.vim:
+    ~/.vimrc:
     ~/.zshrc:
         force: true
-        path: zshrc
+    ~/.tmux:
+    ~/.tmux.conf: tmux.conf
     ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions:
         force: true
         path: oh-my-zsh/custom/plugins/zsh-autosuggestions
     ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
-    ~/.vim/colors/hybrid.vim: vim/vim-hybrid/colors/hybrid.vim
-    ~/.vim/colors/onehalfdark.vim: vim/onehalf/vim/colors/onehalfdark.vim
-    ~/.vim/pack/man/start/nerdtree: vim/pack/man/start/nerdtree
-    ~/.tmux.conf: tmux.conf
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
+    - [cp ./vim/hybrid/colors/hybrid.vim ./vim/colors/hybrid.vim, Setting up theme]
+    - [tmux/plugins/tpm/bin/install_plugins, Installing Tmux Plugins]
+    - [tmux/plugins/tpm/bin/update_plugins all, Updating Tmux Plugins]
 

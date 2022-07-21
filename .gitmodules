@@ -8,15 +8,15 @@
 [submodule "oh-my-zsh/custom/themes/powerlevel10k"]
 	path = oh-my-zsh/custom/themes/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
-[submodule "vim/onehalf"]
-	path = vim/onehalf
-	url = https://github.com/sonph/onehalf.git
 [submodule "oh-my-zsh/custom/plugins/zsh-autosuggestions"]
 	path = oh-my-zsh/custom/plugins/zsh-autosuggestions
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule "vim/vim-hybrid"]
-	path = vim/vim-hybrid
-	url = https://github.com/w0ng/vim-hybrid.git
 [submodule "vim/pack/man/start/nerdtree"]
 	path = vim/pack/man/start/nerdtree
 	url = https://github.com/preservim/nerdtree.git
+[submodule "vim/hybrid"]
+	path = vim/hybrid
+	url = git@github.com:w0ng/vim-hybrid.git
+[submodule "tmux/plugins/tpm"]
+	path = tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm

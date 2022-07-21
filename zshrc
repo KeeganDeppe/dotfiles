@@ -129,3 +129,4 @@ alias bbrm='ssh-keygen -f "/home/kdeppe/.ssh/known_hosts" -R "192.168.7.2"'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export PATH=$PATH:/home/kdeppe/.local/bin
