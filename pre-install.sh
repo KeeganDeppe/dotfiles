@@ -1,5 +1,5 @@
-#!/bin/bash
-
+[ -d vim ] || mkdir -p vim/colors
+[ -d tmux ] || mkdir -p tmux/plugins
 OMZDIR="$HOME/.oh-my-zsh"
 if [ ! -d "$OMZDIR" ]; then
 	echo "Installing oh-my-zsh"
