@@ -1,3 +1,0 @@
-pane	0	0	1	:*	0	server	:/home/kdeppe/FRMS	1	zsh	:
-window	0	0	:zsh	1	:*	ba7f,317x62,0,0,2	:
-state	0	
