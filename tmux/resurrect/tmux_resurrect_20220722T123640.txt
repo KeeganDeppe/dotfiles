@@ -1,0 +1,5 @@
+pane	0	0	1	:*	0	server	:/home/kdeppe/FRMS/docker	0	zsh	:
+pane	0	0	1	:*	1	server	:/home/kdeppe/FRMS	1	zsh	:
+pane	0	0	1	:*	2	server	:/home/kdeppe	0	zsh	:
+window	0	0	:zsh	1	:*	7e59,317x62,0,0{79x62,0,0,0,158x62,80,0,3,78x62,239,0,2}	:
+state	0	
