@@ -16,6 +16,8 @@
         force: true
     ~/.tmux:
     ~/.tmux.conf: tmux.conf
+    ~/.ranger.py: ranger/ranger.py
+    ~/.config/ranger/rc.conf:
     ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions:
         force: true
         path: oh-my-zsh/custom/plugins/zsh-autosuggestions
