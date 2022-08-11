@@ -23,3 +23,9 @@
 [submodule "ranger"]
 	path = ranger
 	url = https://github.com/ranger/ranger.git
+[submodule "vim/pack/man/start/vim-obsession"]
+	path = vim/pack/man/start/vim-obsession
+	url = https://github.com/tpope/vim-obsession
+[submodule "vim/pack/man/start/vim-go"]
+	path = vim/pack/man/start/vim-go
+	url = https://github.com/fatih/vim-go
