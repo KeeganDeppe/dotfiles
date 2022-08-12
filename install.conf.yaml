@@ -27,4 +27,4 @@
     - [cp ./vim/hybrid/colors/hybrid.vim ./vim/colors/hybrid.vim, Setting up theme]
     - [tmux/plugins/tpm/bin/install_plugins, Installing Tmux Plugins]
     - [tmux/plugins/tpm/bin/update_plugins all, Updating Tmux Plugins]
-
+    - [bin/tmux_mem_cpu_build.sh, Building tmux-mem-cpu-load]
