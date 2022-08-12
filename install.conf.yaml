@@ -7,7 +7,7 @@
 - clean: ['~', '~/.oh-my-zsh/custom/', '~/.vim', '~/.tmux']
 
 - shell:
-    - [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive --force, Installing submodules]
 
 - link: 
     ~/.vim:
