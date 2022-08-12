@@ -15,7 +15,7 @@ type Weather struct {
 }
 
 func (w *Weather) String() string {
-	return fmt.Sprintf("%c %.1f%cF %d%%", w.Icon, w.Temp, '\u00B0', w.Humidity) // Output as ICON ##.#*F ##% where the rune is a degree sign
+	return fmt.Sprintf("%c  %.1f%cf %d%%", w.Icon, w.Temp, '\u00B0', w.Humidity) // Output as ICON ##.#*F ##% where the rune is a degree sign
 }
 
 func main() {
