@@ -15,7 +15,7 @@ type Weather struct {
 }
 
 func (w *Weather) String() string {
-	return fmt.Sprintf("%c  %.1f%cf %d%%", w.Icon, w.Temp, '\u00B0', w.Humidity) // Output as ICON ##.#*F ##% where the rune is a degree sign
+	return fmt.Sprintf("%c %.1f%c %d%%", w.Icon, w.Temp, '\ue341', w.Humidity) // Output as ICON ##.#*F ##% where the rune is a degree sign
 }
 
 func main() {
@@ -59,25 +59,25 @@ func getIcon(code string) rune {
 	switch weather {
 	case "01":
 		// clear skys
-		return '\u263C' // sun code
+		return '\ue30d' // sun code
 	case "02", "03":
 		// few clouds and scattered
-		return '\U0001F324' // small clouds with sun
+		return '\ue302' // small clouds with sun
 	case "04":
 		// broken clouds
-		return '\U0001F325' // big clouds with sun
+		return '\ue312' // big clouds with sun
 	case "09", "10":
 		// rain
-		return '\U0001F327' // cloud with rain
+		return '\ue318' // cloud with rain
 	case "11":
 		// thunderstorm
-		return '\U0001F329' // thunderstorm cloud
+		return '\ue31d' // thunderstorm cloud
 	case "13":
 		// snow
-		return '\U0001F328' // snow cloud
+		return '\ue31a' // snow cloud
 	case "50":
 		// mist
-		return '\U0001F32B' // fog
+		return '\ue313' // fog
 	default:
 		return '\uFFFD' // question mark
 	}
