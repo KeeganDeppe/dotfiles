@@ -134,4 +134,5 @@ export PATH=$PATH:$HOME/.local/bin
 # ranger alias
 alias ranger="python3 $HOME/.ranger.py"
 
-#adding ranger to path
+# adding agent startup alias
+alias agent="source $HOME/.dotfiles/bin/agent.sh"
