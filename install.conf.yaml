@@ -8,6 +8,7 @@
 
 - shell:
     - [git submodule update --init --recursive --force, Installing submodules]
+    - [$HOME/.dotfiles/bin/fonts_install.sh, Install Hack font]
 
 - link: 
     ~/.vim:
