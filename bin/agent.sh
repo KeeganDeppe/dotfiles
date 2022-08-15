@@ -7,12 +7,12 @@ if [ -z $SSH_AGENT_SOCK ] ; then
         if [ -e ~/.ssh/id_ed25519 ] ; then
             ssh-add ~/.ssh/id_ed25519
         else
-            kill $SSH_AGENT_PID
             echo -e "No ed25519 keys found! Killing $SSH_AGENT_PID!"
+            eval $(ssh-agent -k)
         fi
     else
-        kill $SSH_AGENT_PID
         echo "Killing $SSH_AGENT_PID!"
+        eval $(ssh-agent -k)
     fi
 fi
 
