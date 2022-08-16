@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # makes sure agent is active and adds keys
-if [ -z $SSH_AGENT_SOCK ] ; then
+if [ -z $SSH_AUTH_SOCK ] ; then
     # agent unset
     eval $(ssh-agent -s)
     if [ "$(ssh-add -l)" = "The agent has no identities." ] ; then
@@ -14,5 +14,6 @@ if [ -z $SSH_AGENT_SOCK ] ; then
         echo "Killing $SSH_AGENT_PID!"
         eval $(ssh-agent -k)
     fi
+else
+    echo "Agent already running at $SSH_AGENT_PID!"
 fi
-
