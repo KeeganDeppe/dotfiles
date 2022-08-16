@@ -23,6 +23,7 @@ let g:go_highlight_extra_types=1
 
 " nerdtree settings
 let NERDTreeHighlightCursorLine=1
+let NERDTreeQuitOnOpen=1
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
@@ -40,4 +41,3 @@ inoremap <up> <NOP>
 inoremap <down> <NOP>
 inoremap <left> <NOP>
 inoremap <right> <NOP>
-
