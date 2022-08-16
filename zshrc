@@ -144,3 +144,5 @@ alias c="cd && clear"
 alias nalgene="$HOME/.dotfiles/bin/water/water.sh 32"
 alias water="$HOME/.dotfiles/bin/water/water.sh"
 
+# setting up location variables
+source "$HOME/.dotfiles/bin/weather/location.sh"
