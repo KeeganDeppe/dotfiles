@@ -22,10 +22,6 @@ waterfile="$HOME/.dotfiles/bin/water/waterintake/$date" # makes it easy to reset
 
 mkdir -p "$HOME/.dotfiles/bin/water/waterintake"
 
-# waterfile layout
-# 1)int in ozs for water consumption
-# 2...) TIMESTAMP change
-
 # update func
 update() {
     printf '%s: %s\n' "$time" "$water_intake" >> "$waterfile"
