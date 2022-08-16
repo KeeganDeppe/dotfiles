@@ -139,3 +139,8 @@ alias agent="source $HOME/.dotfiles/bin/agent.sh"
 
 # home and clear
 alias c="cd && clear"
+
+# water tracking alias
+alias nalgene="$HOME/.dotfiles/bin/water/water.sh 32"
+alias water="$HOME/.dotfiles/bin/water/water.sh"
+
