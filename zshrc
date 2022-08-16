@@ -136,3 +136,6 @@ alias ranger="python3 $HOME/.ranger.py"
 
 # adding agent startup alias
 alias agent="source $HOME/.dotfiles/bin/agent.sh"
+
+# home and clear
+alias c="cd && clear"
