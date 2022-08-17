@@ -46,7 +46,7 @@ func SymbolTest() {
 		"Sunny":               '\ue32b',
 		"ThunderyHeavyRain":   '\ue31d',
 		"ThunderyShowers":     '\ue31d',
-		"ThunderySnowShowers": '\ue365',
+		"ThunderySnowShowers": '\ue366',
 		"VeryCloudy":          '\ue312',
 	}
 
