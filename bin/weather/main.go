@@ -1,20 +1,22 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Weather struct {
-	Temp     float64
-	Humidity int
-	Icon     rune
-	City     string
-	State    string
+	Temp       float64
+	Humidity   int
+	Icon       rune
+	City       string
+	State      string
+	LastPinged int64
 }
 
 type weathercode rune
@@ -34,52 +36,47 @@ const (
 )
 
 func (w *Weather) String() string {
-	return fmt.Sprintf(" %c %.1f%c %d%c in %s, %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City, USStates[w.State]) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
+	return fmt.Sprintf(" %c %.1f%c %d%c in %s, %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City, w.State) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
 }
 
 func main() {
+	// getting weather
+	if err := exec.Command(os.ExpandEnv("$HOME/.dotfiles/bin/weather/weather.sh")).Run(); err != nil {
+		panic(err)
+	}
+	// get up to date info
+	loc := os.ExpandEnv(fmt.Sprintf("$HOME/.dotfiles/bin/weather/.env.location"))
+	weath := os.ExpandEnv(fmt.Sprintf("$HOME/.dotfiles/bin/weather/.env.weather"))
+	if err := godotenv.Load(weath, loc); err != nil {
+		panic(err)
+	}
+
+	var humidity int
+	var temp float64
+	var err error
+
 	city := os.Getenv("CITY")
-	if city == "" {
-		fmt.Print("No location found!")
-		os.Exit(1)
+	state := os.Getenv("STATE") // fine as strings
+	icon := getIcon(os.Getenv("ICON"))
+	h := os.Getenv("HUMIDITY")
+	t := os.Getenv("TEMP")
+	if h != "" {
+		hum, err := strconv.ParseInt(h, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		humidity = int(hum)
 	}
-	city = strings.Trim(city, " \n")
-	weathercmd := exec.Command("sh", "-c", "${HOME}/.dotfiles/bin/weather/weather.sh")
-	var out bytes.Buffer
-	weathercmd.Stdout = &out
-	if err := weathercmd.Run(); err != nil {
-		panic(err)
-	}
-	// parsing json time :D
-	var temp map[string]interface{}
-	if err := json.Unmarshal(out.Bytes(), &temp); err != nil {
-		panic(err)
-	}
-	// fmting hell
-	weather := &Weather{City: city}
-	for k, v := range temp {
-		if k == "main" {
-			// weather info
-			for nk, nv := range v.(map[string]interface{}) {
-				if nk == "temp" {
-					weather.Temp = nv.(float64)
-				} else if nk == "humidity" {
-					weather.Humidity = int(nv.(float64)) // this is as gross as it gets
-				}
-			}
-		} else if k == "name" {
-			weather.State = v.(string)
-		} else if k == "weather" {
-			m := v.([]interface{})
-			for nk, nv := range m[0].(map[string]interface{}) {
-				if nk == "icon" {
-					weather.Icon = getIcon(nv.(string))
-				}
-			}
+	if t != "" {
+		temp, err = strconv.ParseFloat(t, 64)
+		if err != nil {
+			panic(err)
 		}
 	}
+	weather := &Weather{City: city, State: state, Icon: icon, Humidity: humidity, Temp: temp}
 	fmt.Print(weather)
 }
+
 func tod(day bool, dayrune weathercode, nightrune weathercode) rune {
 	if day {
 		return rune(dayrune)

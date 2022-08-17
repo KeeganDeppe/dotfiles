@@ -2,4 +2,5 @@ tmux/resurrect
 tmux/plugins
 !tmux/plugins/tpm
 bin/water/waterintake
+bin/weather/.env*
 *.swp
