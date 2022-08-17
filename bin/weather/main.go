@@ -15,7 +15,6 @@ type Weather struct {
 	Humidity   int
 	Icon       rune
 	City       string
-	State      string
 	LastPinged int64
 }
 
@@ -36,7 +35,7 @@ const (
 )
 
 func (w *Weather) String() string {
-	return fmt.Sprintf(" %c %.1f%c %d%c in %s, %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City, w.State) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
+	return fmt.Sprintf(" %c %.1f%c %d%c in %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
 }
 
 func main() {
@@ -56,7 +55,6 @@ func main() {
 	var err error
 
 	city := os.Getenv("CITY")
-	state := os.Getenv("STATE") // fine as strings
 	icon := getIcon(os.Getenv("ICON"))
 	h := os.Getenv("HUMIDITY")
 	t := os.Getenv("TEMP")
@@ -73,7 +71,7 @@ func main() {
 			panic(err)
 		}
 	}
-	weather := &Weather{City: city, State: state, Icon: icon, Humidity: humidity, Temp: temp}
+	weather := &Weather{City: city, Icon: icon, Humidity: humidity, Temp: temp}
 	fmt.Print(weather)
 }
 

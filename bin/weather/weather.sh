@@ -10,6 +10,7 @@ CUR_TIMESTAMP=$(date +%s)
 if [[ $CUR_TIMESTAMP -gt $EXPIRATION  || -z $EXPIRATION ]] ; then
     WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&appid="$API_KEY"\&units=imperial)
 
+    echo $WEATHER
     TEMP=$(echo $WEATHER | jq -r '.main.temp')
     HUMIDITY=$(echo $WEATHER | jq -r '.main.humidity')
     ICON=$(echo $WEATHER | jq -r '.weather[0].icon')
