@@ -4,3 +4,4 @@ tmux/plugins
 bin/water/waterintake
 bin/weather/.env*
 *.swp
+bin/startup/*.json
