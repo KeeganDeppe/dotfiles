@@ -28,14 +28,14 @@ if [[ -z $session_exists ]] ; then
 
     tmux select-window -t $session:0
     tmux split-window -h -p 25
-    tmux send-keys "cd && clear && printf '\n\n\n' && curl --silent -fL "https://wttr.in?Fn"" C-m
+    tmux send-keys 'cd && clear && curl --silent -fL https://wttr.in?Fn' Enter
     tmux select-pane -t 0
     tmux split-window -h -p 66
     tmux select-pane -t 0
     tmux split-window -v -p 90
     tmux select-pane -t 0
 
-    tmux send-keys "cd && clear && printf '\n\n' && $HOME/.dotfiles/bin/startup/quote.sh && printf '\n'" C-m
+    tmux send-keys 'cd && clear && quote.sh' Enter
     tmux select-pane -t 1
     tmux send-keys 'cd && clear' C-m
     tmux select-pane -t 2

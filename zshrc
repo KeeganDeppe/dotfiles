@@ -16,6 +16,9 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN:$GOPATH:$GOROOT:$GOROOT/bin
+
+# adding scripts to path
+export PATH=$PATH:$HOME/.dotfiles/bin/startup:$HOME/.dotfiles/bin
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
