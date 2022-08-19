@@ -18,7 +18,8 @@ export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOBIN:$GOPATH:$GOROOT:$GOROOT/bin
 
 # adding scripts to path
-export PATH=$PATH:$HOME/.dotfiles/bin/startup:$HOME/.dotfiles/bin
+export PATH=$PATH:$HOME/.dotfiles/bin/startup:$HOME/.dotfiles/bin:$HOME/.dotfiles/bin/weather
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -149,3 +150,6 @@ alias water="$HOME/.dotfiles/bin/water/water.sh"
 
 # setting up location variables
 # source "$HOME/.dotfiles/bin/weather/location.sh"
+#
+# tmux doormat script
+# source "$HOME/.dotfiles/bin/startup/tmux_startup.sh"

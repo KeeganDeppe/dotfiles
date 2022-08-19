@@ -24,5 +24,5 @@ else
 fi
 
 get_qotd # sets quote and author
-printf '"%s" - %s\n' "$quote" "$author"
+printf '\n"%s"\n   - %s\n' "$quote" "$author" | fold -s
 

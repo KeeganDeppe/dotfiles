@@ -24,7 +24,7 @@
         path: oh-my-zsh/custom/plugins/zsh-autosuggestions
     ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 
- shell:
+- shell:
     - [$HOME/.dotfiles/bin/weather/symbol_test.sh, Testing weather symbols]
     - [cp ./vim/hybrid/colors/hybrid.vim ./vim/colors/hybrid.vim, Setting up theme]
     - [tmux/plugins/tpm/bin/install_plugins, Installing Tmux Plugins]
