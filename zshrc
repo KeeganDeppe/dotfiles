@@ -150,6 +150,4 @@ alias water="$HOME/.dotfiles/bin/water/water.sh"
 
 # setting up location variables
 # source "$HOME/.dotfiles/bin/weather/location.sh"
-#
-# tmux doormat script
-# source "$HOME/.dotfiles/bin/startup/tmux_startup.sh"
+source "$HOME/.dotfiles/bin/startup/tmux_start.sh"
