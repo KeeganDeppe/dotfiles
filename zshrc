@@ -151,3 +151,8 @@ alias water="$HOME/.dotfiles/bin/water/water.sh"
 # setting up location variables
 # source "$HOME/.dotfiles/bin/weather/location.sh"
 source "$HOME/.dotfiles/bin/startup/tmux_start.sh"
+
+# fzf stuff
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS='--layout=reverse --border --height=40%'
+alias bat="batcat"

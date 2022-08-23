@@ -1,15 +1,5 @@
 #!/usr/bin/env bash
 
-print_output=false
-
-while getopts "s" arg; do
-    case $arg in
-        s)
-            print_output=true
-            ;;
-    esac
-done    
-
 SESSION="doormat" # welcom session name
 START_SERVER=false
 
@@ -37,6 +27,10 @@ set_session() {
 
 set_session
 
-if $print_output ; then
-    echo "SESSION=$SESSION"
-fi
+while getopts "s" arg; do
+    case $arg in
+        s)
+            echo "SESSION=$SESSION"
+            ;;
+    esac
+done    

@@ -8,7 +8,7 @@
 
 - shell:
     - [git submodule update --init --recursive --force, Installing submodules]
-    - [$HOME/.dotfiles/bin/fonts_install.sh, Install Hack font]
+    - [bin/font_install.sh, Installing Hack font]
 
 - link: 
     ~/.vim:
@@ -17,6 +17,7 @@
         force: true
     ~/.tmux:
     ~/.tmux.conf: tmux.conf
+    ~/.fzf:
     ~/.ranger.py: ranger/ranger.py
     ~/.config/ranger/rc.conf:
     ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions:
@@ -25,8 +26,20 @@
     ~/.oh-my-zsh/custom/themes/powerlevel10k.zsh-theme: oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
 
 - shell:
-    - [$HOME/.dotfiles/bin/weather/symbol_test.sh, Testing weather symbols]
     - [cp ./vim/hybrid/colors/hybrid.vim ./vim/colors/hybrid.vim, Setting up theme]
     - [tmux/plugins/tpm/bin/install_plugins, Installing Tmux Plugins]
     - [tmux/plugins/tpm/bin/update_plugins all, Updating Tmux Plugins]
-    - [bin/tmux_mem_cpu_build.sh, Building tmux-mem-cpu-load]
+    -
+      command: fzf/install
+      stdin: true
+      stdout: true
+      description: Installing Fzf
+    - 
+      command: bin/tmux_mem_cpu_load.sh
+      stdin: true
+      stdout: true
+      description: Building the mem-cpu-load tracker for tmux
+    - 
+      command: bin/weather/symbol_test.sh
+      stdout: true
+      description: Testing weather symbols in Stdout
