@@ -5,3 +5,4 @@ bin/water/waterintake
 bin/weather/.env*
 *.swp
 bin/startup/*.json
+bin/bluebikes/data

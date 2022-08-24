@@ -5,7 +5,7 @@ filetype plugin indent on
 " set shiftwidth=4
 " set expandtab
 " set backspace=indent,eol,start
-set ts=4 sts=4 sw=2 expandtab
+set ts=4 sts=4 sw=4 expandtab
 set backspace=indent,eol,start
 
 " basics
@@ -86,7 +86,7 @@ nnoremap <silent> fs :GFiles?<CR>
 
 " tweaking timeout to quit instatnly via esc
 set ttimeout
-set ttimeoutlen=0
+set ttimeoutlen=100
 " time to learn vim
 noremap <up> :echoerr "Umm, use k instead"<cr>
 noremap <down>:echoerr "Umm,use j instead"<cr>
@@ -96,3 +96,6 @@ inoremap <up> <NOP>
 inoremap <down> <NOP>
 inoremap <left> <NOP>
 inoremap <right> <NOP>
+
+" jq formating
+noremap <silent> gj :%!gojq .<cr>
