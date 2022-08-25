@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+usage() {
+    cat <<EOF
+Usage: wttr [-s] [-d] [-u] [-i] [-f] [-h]
+
+Queries the weather and outputs it in a Nerd Font compaitable way
+
+Options:
+  -s, --setloc=<LOC>    change location used for wttr.in query
+                          clears disploc on set
+  -d, --disploc=<LOC>   set a location name to display instead of the 
+                          location used in wttr.in query
+  -u, --unit={c|f}      set the output unit to fahrenheit or celsius
+  -i, --info            shows current values of location, unit and
+                          disploc if it is set
+  -f, --force           force refresh weather data
+  -h, --help            Show this help message
+EOF
+exit 1
+}
+
+get_tod() {
+    # sets $TOD
+    hour=$(date +%H)
+    if [[ $hour -gt 21 || $hour -lt 5 ]] ; then # between 9 pm and 5 am
+        TOD="night"
+    else
+        TOD="day"
+    fi
+}
+
+get_wttr() {
+    # gets weather for $LOCATION and stores it into file with timestamp
+    url="https://wttr.in/$LOCATION?0&format=j2" #json stuff need to fix temp
+    query="{\
+        temp:       .current_condition[0].temp_F,\
+        humidity:   .current_condition[0].humidity,\
+        conditions: .current_condition[0].weatherCode,\
+        location:   .nearest_area[0].areaName[0].value}"
+
+    WTTR=$(curl --silent -fL "$url" | gojq "$query")
+    echo "$WTTR"
+    #TEMP=$(echo "$WTTR" | gojq -r '.temp_F')
+    #HUMIDITY=$(echo "$WTTR" | gojq -r '.humidity')
+    #CONDITIONS=$(echo "$WTTR" | gojq -r '.weatherDesc[0].value')
+}
+
+set_location() {
+    # updates location of weather query to $new_loc
+    echo "TODO"
+}
+
+display_location() {
+    # updates location to display to $disp_loc
+    echo "TODO"
+}
+
+set_units() {
+    # updates units used to $unit
+    echo "TODO"
+}
+
+display_info() {
+    # prints current config to stdout
+    echo "TODO"
+}
+
+
+update_wttr() {
+    # checks to see if old weather data is out of date
+    echo "TODO"
+}
+
+print_wttr() {
+
+    echo "TODO"
+}
+
+while [[ "$1" != "" ]]; do
+    case $1 in
+    -h | --help)
+        usage
+        ;;
+    -s | --setloc)
+        shift
+        new_loc="$1"
+        set_location
+        ;;
+    -d | --disploc)
+        shift
+        disp_loc="$1"
+        display_location
+        ;;
+    -u | --unit)
+        shift
+        unit="$1"
+        set_units
+        ;;
+    -i | --info)
+        display_info
+        ;;
+    -f | --force)
+        get_wttr
+        ;;
+    *)
+        echo "Error: wttr $@"
+        usage
+        ;;
+    esac
+    shift
+done
