@@ -35,7 +35,7 @@ const (
 )
 
 func (w *Weather) String() string {
-	return fmt.Sprintf(" %c %.1f%c %d%c in %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
+	return fmt.Sprintf(" %c  %.1f%c %d%c in %s", w.Icon, w.Temp, DEGREES_F, w.Humidity, HUMIDITY, w.City) // Output as ICON ##.#*F ##% in City, ST where the rune is a degree sign
 }
 
 func main() {
