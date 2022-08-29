@@ -23,13 +23,14 @@ EOF
 timeout=60 # interval we request bike information at
 WORKINGDIR="$HOME/.dotfiles/bin/bluebikes"
 LOG=$(printf '%s/%s.log' "$WORKINGDIR/data" $(date +%m-%d))
-if [[ ! -f $LOG ]] ; then
-    touch $LOG
-fi
 
 # create directory on fresh installs
 if [[ ! -d "$WORKINGDIR/data/status" ]] ; then
     mkdir -p "$WORKINGDIR/data/status"
+fi
+# create log
+if [[ ! -f $LOG ]] ; then
+    touch $LOG
 fi
 
 if [[ ! -e "$WORKINGDIR/data/alias.json" ]] ; then

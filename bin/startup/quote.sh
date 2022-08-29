@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 get_qotd() {
     # needs $quotes_json to be set
-    len=$(echo "$quotes_json" | jq '. | length ')
+    len=$(echo "$quotes_json" | gojq '. | length ')
     qotd=$(( $RANDOM % $len ))
-    quote=$(echo "$quotes_json" | jq -r ".[$qotd].q")
-    author=$(echo "$quotes_json" | jq -r ".[$qotd].a")
+    quote=$(echo "$quotes_json" | gojq -r ".[$qotd].q")
+    author=$(echo "$quotes_json" | gojq -r ".[$qotd].a")
 }
 
 cur_date=$(date +%m-%d)

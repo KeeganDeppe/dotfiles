@@ -25,7 +25,7 @@ format_doormat() {
 
     tmux select-window -t "$SESSION:0"
     # creating a weather view on right quater
-    tmux split-window -h -p 25
+    tmux split-window -h -p 40
     # creating quote area
     tmux split-window -v -p 20
     # weather
@@ -35,12 +35,10 @@ format_doormat() {
     tmux select-pane -t 2 
     tmux send-keys 'c && quote.sh' C-m
 
-    # creating a central vim pane taking up half the screen and a little box on the top left
-    tmux select-pane -t 0
-    tmux split-window -h -p 66
     # opening vim
-    tmux select-pane -t 1
+    tmux select-pane -t 0
     tmux send-keys 'c && vim' C-m
+
     # renaming based on TOD
     tmux rename-window -t "$SESSION:0" "$window"
     tmux set-hook -u -t $SESSION client-attached
