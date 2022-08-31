@@ -10,6 +10,7 @@ set backspace=indent,eol,start
 
 " basics
 set number
+let mapleader=' '
 
 " setting color theme stuff
 set background=dark
@@ -41,8 +42,8 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " nerdtree binds
-nnoremap <silent> <C-n> :NERDTree<CR>
-nnoremap <silent> <C-t> :NERDTreeToggle<CR>
+nnoremap <silent> <leader>n :NERDTree<CR>
+nnoremap <silent> <leader>t :NERDTreeToggle<CR>
 " nnoremap <C-f> :NERDTreeFocus<CR> going to conflict with fzf and I dont use
 " this anyway
 
@@ -79,10 +80,10 @@ endif
 command! -bang -nargs=? -complete=dir Find 
       \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 
-nnoremap <silent> ff :Find<CR>
-nnoremap <silent> fh :Find $HOME<CR>
-nnoremap <silent> fg :GFiles<CR>
-nnoremap <silent> fs :GFiles?<CR>
+nnoremap <silent> <leader>f :Find<CR>
+nnoremap <silent> <leader>h :Find $HOME<CR>
+nnoremap <silent> <leader>g :GFiles<CR>
+nnoremap <silent> <leader>s :GFiles?<CR>
 
 " tweaking timeout to quit instatnly via esc
 set ttimeout
