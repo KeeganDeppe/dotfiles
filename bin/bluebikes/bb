@@ -127,7 +127,7 @@ output_status() {
         fi
     fi
 
-    printf '%d   %d   %s' "$DOCKS" "$BIKES" "$(echo "$NAME" | tr -d '"')"
+    printf '%d   %d   %s' "$BIKES" "$DOCKS" "$(echo "$NAME" | tr -d '"')"
 }
 
 set_station_alias() {

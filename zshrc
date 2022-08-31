@@ -135,9 +135,6 @@ alias bbrm='ssh-keygen -f "/home/kdeppe/.ssh/known_hosts" -R "192.168.7.2"'
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH=$PATH:$HOME/.local/bin
 
-# ranger alias
-alias ranger="python3 $HOME/.ranger.py"
-
 # adding agent startup alias
 alias agent="source $HOME/.dotfiles/bin/agent.sh"
 
@@ -150,7 +147,7 @@ alias water="$HOME/.dotfiles/bin/water/water.sh"
 
 # setting up location variables
 # source "$HOME/.dotfiles/bin/weather/location.sh"
-source "$HOME/.dotfiles/bin/startup/tmux_start.sh"
+#source "$HOME/.dotfiles/bin/startup/tmux_start.sh"
 
 # fzf stuff
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

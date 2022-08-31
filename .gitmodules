@@ -17,9 +17,6 @@
 [submodule "tmux/plugins/tpm"]
 	path = tmux/plugins/tpm
 	url = https://github.com/tmux-plugins/tpm
-[submodule "ranger"]
-	path = ranger
-	url = https://github.com/ranger/ranger.git
 [submodule "vim/pack/man/start/vim-obsession"]
 	path = vim/pack/man/start/vim-obsession
 	url = https://github.com/tpope/vim-obsession

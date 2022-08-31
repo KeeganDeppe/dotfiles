@@ -17,9 +17,8 @@
         force: true
     ~/.tmux:
     ~/.tmux.conf: tmux.conf
-    ~/.fzf:
-    ~/.ranger.py: ranger/ranger.py
     ~/.config/ranger/rc.conf:
+    ~/.fzf:
     ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions:
         force: true
         path: oh-my-zsh/custom/plugins/zsh-autosuggestions
@@ -30,9 +29,22 @@
     - [tmux/plugins/tpm/bin/install_plugins, Installing Tmux Plugins]
     - [tmux/plugins/tpm/bin/update_plugins all, Updating Tmux Plugins]
     -
+      command: pip install ranger-fm
+      stdin: true
+      stdout: true
+      stderr: true
+      description: Installing ranger
+    -
+      command: pip install ranger-tmux && python -m ranger_tmux install
+      stdin: true
+      stdout: true
+      stderr: true
+      description: Installing ranger-tmux
+    -
       command: fzf/install
       stdin: true
       stdout: true
+      stderr: true
       description: Installing Fzf
     - 
       command: bin/tmux_mem_cpu_load.sh
