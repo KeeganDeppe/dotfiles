@@ -15,5 +15,6 @@ if [ -z $SSH_AUTH_SOCK ] ; then
         eval $(ssh-agent -k)
     fi
 else
+    echo "$SSH_AUTH_SOCK"
     echo "Agent already running at $SSH_AGENT_PID!"
 fi

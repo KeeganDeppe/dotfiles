@@ -19,6 +19,24 @@ Options:
 EOF
 }
 
+colorize() {
+    # sets $COLOR to value set in $COLORIZE
+    #echo $COLORIZE
+    case "$COLORIZE" in
+        [0-2])
+            clr='#[fg=color1]' # red
+            ;;
+        [3-6])
+            clr='#[fg=color184]' # yellow
+            ;;
+        *)
+            clr='#[fg=color34]' # green
+            ;;
+    esac
+    COLOR="$clr$COLORIZE"
+}
+    
+
 # constants
 timeout=60 # interval we request bike information at
 WORKINGDIR="$HOME/.dotfiles/bin/bluebikes"
@@ -127,7 +145,16 @@ output_status() {
         fi
     fi
 
-    printf '%d   %d   %s' "$BIKES" "$DOCKS" "$(echo "$NAME" | tr -d '"')"
+    COLORIZE="$BIKES"
+    colorize
+    echo "$BIKES $COLOR $clr $COLORIZE"
+    BIKES="$COLOR"
+
+    COLORIZE="$DOCKS"
+    colorize
+    DOCKS="$COLOR"
+    echo "$DOCKS $COLOR $clr $COLORIZE"
+    printf '%s   %s  #[default] %s' $BIKES $DOCKS "$(echo "$NAME" | tr -d '"')"
 }
 
 set_station_alias() {
