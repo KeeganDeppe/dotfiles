@@ -1,0 +1,22 @@
+Alright, this system needs to be robust and easy to use. I shouldn't have to do ANYTHING extra to use this
+
+2 ways to do it
+Have a file for each day and clock in and out 
+have a master log and parse the log
+parsing the log seems significantly easier
+
+File name can be generic because it gets cleaned as part of an accumulation script
+i.e. timesheet.log
+
+Everytime a user logs in echo
+I, DATE, TIME to the file
+A logout or i3lock echos
+O, DATE, TIME to the same file
+
+can be dead simple as far as the logging goes
+clock -i to clock in
+clock -o to clock out
+
+Parser will have to be a bit more robust
+
+

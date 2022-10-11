@@ -46,6 +46,11 @@ nnoremap <silent> <leader>n :NERDTree<CR>
 nnoremap <silent> <leader>t :NERDTreeToggle<CR>
 " nnoremap <C-f> :NERDTreeFocus<CR> going to conflict with fzf and I dont use
 " this anyway
+"
+" vimtex configuration
+let g:vimtex_view_method = 'zathura'
+let g:tex_flavor='latex'
+let g:vimtex_quickfix_mode=0
 
 " fzf integration
 set rtp+=~/.fzf

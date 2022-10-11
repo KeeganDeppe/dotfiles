@@ -13,9 +13,9 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # fix golang not loading properly
 export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export GOBIN=$GOPATH/bin
-export PATH=$PATH:$GOBIN:$GOPATH:$GOROOT:$GOROOT/bin
+#export GOPATH=$HOME/go
+#export GOBIN=$GOROOT/bin
+export PATH=$PATH:$GOROOT/bin
 
 # adding scripts to path
 export PATH=$PATH:$HOME/.dotfiles/bin/startup:$HOME/.dotfiles/bin:$HOME/.dotfiles/bin/weather:$HOME/.dotfiles/bin/bluebikes
