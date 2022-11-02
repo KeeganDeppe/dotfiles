@@ -5,7 +5,7 @@ ft_minutes=$(($ft_seconds/60))
 ft_hours=$(($ft_minutes/60))
 
 echo $ft_hours $ft_minutes $ft_seconds
-if [[ $ft_hours -gt 1 ]] ; then
+if [[ $ft_hours -gt 0 ]] ; then
     # display with leading hours
     rem_mins=$(($ft_minutes % 60)) # get remaining mins
     printf '%dH %dM' $ft_hours $rem_mins
