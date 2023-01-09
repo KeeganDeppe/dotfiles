@@ -32,7 +32,7 @@ get_tod() {
 
 get_wttr() {
     # gets weather for $LOCATION and stores it into file with timestamp
-    url="https://wttr.in/$LOCATION?0&format=j2" #json stuff need to fix temp
+    url="https://wttr.in/$LOCATION?format=j2" #json stuff need to fix temp
     query="{\
         temp:       .current_condition[0].temp_F,\
         humidity:   .current_condition[0].humidity,\
@@ -53,6 +53,11 @@ set_location() {
 
 display_location() {
     # updates location to display to $disp_loc
+    if [[ "$1" == "" ]] ; then
+        # no arg given, print current loc
+        echo 
+    fi
+    shift
     echo "TODO"
 }
 
@@ -89,7 +94,6 @@ while [[ "$1" != "" ]]; do
         ;;
     -d | --disploc)
         shift
-        disp_loc="$1"
         display_location
         ;;
     -u | --unit)

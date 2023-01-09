@@ -1,3 +1,13 @@
+# makes sure agent is active and adds keys
+if [ ! -S ~/.ssh/ssh_auth_sock ] ; then
+    # setting agent
+    eval `ssh-agent`
+    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+fi
+
+export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+ssh-add -l > /dev/null || ssh-add ~/.ssh/id_ed25519
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -135,9 +145,6 @@ alias bbrm='ssh-keygen -f "/home/kdeppe/.ssh/known_hosts" -R "192.168.7.2"'
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH=$PATH:$HOME/.local/bin
 
-# adding agent startup alias
-alias agent="source $HOME/.dotfiles/bin/agent.sh"
-
 # home and clear
 alias c="cd && clear"
 
@@ -153,3 +160,5 @@ alias water="$HOME/.dotfiles/bin/water/water.sh"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS='--layout=reverse --border --height=40%'
 alias bat="batcat"
+alias tt="$HOME/.dotfiles/bin/timetracker/timetracker"
+
