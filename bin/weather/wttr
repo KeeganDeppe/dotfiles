@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+WEATHER_DIR="${HOME}/.dotfiles/bin/weather"
+
 usage() {
     cat <<EOF
 Usage: wttr [-s] [-d] [-u] [-i] [-f] [-h]
@@ -7,85 +9,143 @@ Usage: wttr [-s] [-d] [-u] [-i] [-f] [-h]
 Queries the weather and outputs it in a Nerd Font compaitable way
 
 Options:
+  -p, --print           print the current weather information
   -s, --setloc=<LOC>    change location used for wttr.in query
-                          clears disploc on set
-  -d, --disploc=<LOC>   set a location name to display instead of the 
-                          location used in wttr.in query
-  -u, --unit={c|f}      set the output unit to fahrenheit or celsius
-  -i, --info            shows current values of location, unit and
-                          disploc if it is set
+                          will use IP if left blank
+  -d, --disploc=<LOC>   show location used in query
   -f, --force           force refresh weather data
   -h, --help            Show this help message
 EOF
-exit 1
-}
-
-get_tod() {
-    # sets $TOD
-    hour=$(date +%H)
-    if [[ $hour -gt 21 || $hour -lt 5 ]] ; then # between 9 pm and 5 am
-        TOD="night"
-    else
-        TOD="day"
-    fi
 }
 
 get_wttr() {
-    # gets weather for $LOCATION and stores it into file with timestamp
-    url="https://wttr.in/$LOCATION?format=j2" #json stuff need to fix temp
-    query="{\
-        temp:       .current_condition[0].temp_F,\
-        humidity:   .current_condition[0].humidity,\
-        conditions: .current_condition[0].weatherCode,\
-        location:   .nearest_area[0].areaName[0].value}"
 
-    WTTR=$(curl --silent -fL "$url" | gojq "$query")
-    echo "$WTTR"
-    #TEMP=$(echo "$WTTR" | gojq -r '.temp_F')
-    #HUMIDITY=$(echo "$WTTR" | gojq -r '.humidity')
-    #CONDITIONS=$(echo "$WTTR" | gojq -r '.weatherDesc[0].value')
+    if [[ -z "$ZONE" || ! -z "$UPDATE" ]] ; then
+        # getting grid points
+        url="https://api.weather.gov/points/$LATITUDE,$LONGITUDE"
+        GRID=$(curl --silent -fL "$url")
+        query="{\
+            zone:           .properties.forecastZone,\
+            city:           .properties.relativeLocation.properties.city,\
+            state:          .properties.relativeLocation.properties.state}"
+
+        res=$(echo "$GRID" | gojq "$query")
+        echo "$res"
+        CITY=$(echo "$res" | gojq '.city')
+        STATE=$(echo "$res" | gojq '.state')
+        ZONE=$(echo "$res" | gojq '.zone' | tr -d '"')
+    fi
+
+    WEATHER=$(curl --silent -fL "$ZONE/observations" | gojq '.features[0].properties')
+    query="{\
+        temp:       .temperature.value,\
+        humidity:   .relativeHumidity.value,\
+        icon:       .icon}"
+
+    PARSED=$(echo "$WEATHER" | gojq "$query")
+    TEMP=$(echo "$PARSED" | gojq '.temp')
+    TEMP=$(echo "$TEMP * (9/5) + 32" | bc -l)
+    HUMIDITY=$(echo "$PARSED" | gojq '.humidity')
+    TOD=$(echo "$PARSED" | gojq '.icon' | awk -F / '{print $6}')
+    ICON=$(echo "$PARSED" | gojq '.icon' | awk -F / '{print $7}' | awk -F ? '{print $1}')
+    EXPIRATION=$(($(date +%s) + 60))
+    printf 'TEMP=%s\nHUMIDITY=%s\nICON=%s\nLOCATION=%s\nZONE=%s\nCITY=%s\nSTATE=%s\nTOD=%s\nEXPIRATION=%s\n' "$TEMP" "$HUMIDITY" "$ICON" "$LOCATION" "$ZONE" "$CITY" "$STATE" "$TOD" "$EXPIRATION" > ${WEATHER_DIR}/.weather
+
+
+
+    #### 
+    # below is WTTR impl, using NWS above
+    ####
+    # gets weather for $LOCATION and stores it into file with timestamp
+    # url="https://wttr.in/?format=j1&nonce=$RANDOM"
+    # FULL_WTTR=$(curl --silent -fL "$url")
+    # # parse relevant info
+    # query="{\
+    #     temp_F:       .current_condition[0].temp_F,\
+    #     temp_C:       .current_condition[0].temp_C,\
+    #     humidity:   .current_condition[0].humidity,\
+    #     conditions: .current_condition[0].weatherCode,\
+    #     location:   .nearest_area[0].areaName[0].value,\
+    #     sunset:     .weather[0].astronomy[0].sunset,\
+    #     sunrise:    .weather[1].astronomy[0].sunrise}"
+
+    # WTTR=$(echo "$FULL_WTTR" | gojq "$query")
+    # # Parsing info
+    # TEMP=$(echo "$WTTR" | gojq .temp_"$UNITS")
+    # HUMIDITY=$(echo "$WTTR" | gojq '.humidity')
+    # CONDITIONS=$(echo "$WTTR" | gojq '.conditions')
+    # LOCATION=$(echo "$WTTR" | gojq '.location')
+    # # TOD info
+    # SUNSET=$(echo "$WTTR" | gojq '.sunset' | tr -d ' "')
+    # SUNRISE=$(echo "$WTTR" | gojq '.sunrise' | tr -d ' "')
+    # # getting TOD
+    # get_tod
+
+    # # setting symbol
+    # # updating weather info
+    # printf 'UNITS=%s\nTEMP=%s\nHUMIDITY=%s\nCONDITIONS=%s\nLOCATION=%s\nEXPIRATION=%s\nTOD=%s\n' "$UNITS" "$TEMP" "$HUMIDITY" "$CONDITIONS" "$LOCATION" "$EXPIRATION" "$TOD" > ${WEATHER_DIR}/.weather
 }
 
 set_location() {
-    # updates location of weather query to $new_loc
-    echo "TODO"
+    # updates location of weather query to $new_loc, can be empty
+    LOCATION="$new_loc"
+    UPDATE="true"
+
+    url="https://v2.wttr.in/$LOCATION?format=j1"
+    query="{\
+        lat:   .nearest_area[0].latitude,\
+        lon:   .nearest_area[0].longitude}"
+
+    WTTR=$(curl --silent -fL "$url" | gojq "$query")
+    # Grabbing env vars
+    LATITUDE=$(echo "$WTTR" | gojq '.lat' | tr -d ' "')
+    LONGITUDE=$(echo "$WTTR" | gojq '.lon' | tr -d ' "')
+    get_wttr
 }
 
 display_location() {
     # updates location to display to $disp_loc
-    if [[ "$1" == "" ]] ; then
-        # no arg given, print current loc
-        echo 
+    printf 'Searching %s, (%s, %s)\n' "$LOCATION" "$CITY" "$STATE"
+    
+}
+
+load_wttr() {
+    # loads and checks weather
+    if [[ ! -f ${WEATHER_DIR}/.weather ]] ; then
+        # file doesnt exist
+        UNITS="F" # defaults to farenheit
+        get_wttr
     fi
-    shift
-    echo "TODO"
-}
 
-set_units() {
-    # updates units used to $unit
-    echo "TODO"
-}
+    # load env
+    source ${WEATHER_DIR}/.weather
 
-display_info() {
-    # prints current config to stdout
-    echo "TODO"
-}
-
-
-update_wttr() {
-    # checks to see if old weather data is out of date
-    echo "TODO"
+    # check for expiration
+    if [[ $(date +%s) -ge $EXPIRATION ]] ; then
+        get_wttr
+    fi
+     
 }
 
 print_wttr() {
-
-    echo "TODO"
+    # stripping and reformatting quotations
+    query=$(printf '.%s.%s' $TOD $ICON)
+    SYMBOL=$(cat ${WEATHER_DIR}/symbols.json | gojq "$query" | tr -d '"')
+    UNIT=$(echo -e "\ufa04")
+    HUMID_SYMB=$(echo -e "\ue373")
+    printf '%s %.1f%s %0.1f %s in %s, %s\n' "$SYMBOL" "$TEMP" "$UNIT" "$HUMIDITY" "$HUMID_SYMB" "$CITY" "$STATE"
+    
 }
+
+load_wttr
 
 while [[ "$1" != "" ]]; do
     case $1 in
     -h | --help)
         usage
+        ;;
+    -p | --print)
+        print_wttr
         ;;
     -s | --setloc)
         shift
@@ -95,14 +155,6 @@ while [[ "$1" != "" ]]; do
     -d | --disploc)
         shift
         display_location
-        ;;
-    -u | --unit)
-        shift
-        unit="$1"
-        set_units
-        ;;
-    -i | --info)
-        display_info
         ;;
     -f | --force)
         get_wttr

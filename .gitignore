@@ -6,5 +6,5 @@ bin/weather/.env*
 *.swp
 bin/startup/*.json
 bin/bluebikes/data
-bin/timetracker/timesheets/*
+bin/timetracker/timesheets
 
