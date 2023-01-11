@@ -3,18 +3,17 @@
 #set -e
 
 usage() {
-    # basic usage statement
     cat <<EOF
-Usage: bb [-c|f|s|h|r [option]]
+usage: $0 [-c|f|s|h|r [option]]
 
 Queries Bluebikes API to get recent bike status
 
 Options:
-  -c, --colorize        adds tmux color options
+  -c, --colorize        enables tmux color options
   -f, --force           force refreshes bb data
   -s, --search          pulls up a searchable fzf menu to update
                           displayed station
-  -r, --rename[=NAME]   rename the current station
+  -r, --rename [NAME]   rename the current station
                           stored in data/alias.json
                           if called without an arguement resets to default
   -h, --help            display this message
@@ -116,8 +115,12 @@ set_station_alias() {
     OUT=$(cat "$ALIAS_FILE" | gojq ".$FMT_STATIONID |= $FMT_ALIAS")
     echo "$OUT" > "$ALIAS_FILE"
 
-    printf 'Updated alias to %s\n' "$ALIAS"
-
+    # printing change
+    if [[ -z "$ALIAS" ]] ; then
+        printf 'Removing alias\n'
+    else
+        printf 'Updated alias to %s\n' "$ALIAS"
+    fi
 }
 
 
@@ -181,46 +184,55 @@ print_status() {
         BIKES=$(colorize $BIKES)
         DOCKS=$(colorize $DOCKS)
     fi
-    printf '%s   %s  %s%s' $BIKES $DOCKS "$DEFAULT" "$STATION_NAME"
+    printf '%s   %s  %s%s\n' $BIKES $DOCKS "$DEFAULT" "$STATION_NAME"
 }
 
 
 # always check/clean status
 check_update
 
-if [[ $# -eq 0 ]] ; then
-    # no args passed, default to print
-    print_status
-fi
+# change long form
+for arg in "$@"; do
+    shift
+    case "$arg" in
+        '--help')       set -- "$@" "-h"    ;;
+        '--search')     set -- "$@" "-s"    ;;
+        '--force')      set -- "$@" "-f"    ;;
+        '--rename')     set -- "$@" "-r"    ;;
+        '--colorize')   set -- "$@" "-c"    ;;
+        *)              set -- "$@" "$arg"  ;;
+    esac
+done
 
-while [[ $# -gt 0 ]] ; do
-    # loop over args if present
-    case $1 in
-        -h | --help)
+# parsing args
+while getopts "hsfcr" opt ; do
+    case "$opt" in
+        'h' )
             usage
             exit 0
             ;;
-        -s | --search)
+        's' )
             update_station
             ;;
-        -f | --force)
+        'f' )
             UPDATE=true
-            output_status
             ;;
-        -r | --rename)
-            shift
-            ALIAS="$1"
+        'c' )
+            COLORIZE=true
+            ;;
+        'r' )
+            nextopt=${!OPTIND}
+            if [[ -n "$nextopt" && "$nextopt" != -* ]] ; then
+                ALIAS="$nextopt"
+            fi
             set_station_alias
             ;;
-        -c | --colorize)
-            COLORIZE=true
-            print_status
-            ;;
-        *)
-            echo "Error: bb" >&2
+        '?' )
             usage
             exit 1
             ;;
     esac
-    shift # shift over the args before loop
 done
+
+# finish by printing
+print_status

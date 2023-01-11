@@ -1,75 +1,160 @@
 #!/usr/bin/env bash
+
 # this script enables water tracking in tmux status bar via a simple command
-# tracking resets everyday at midnight local time
-# to inc/dec water consumed just call water XX where XX is any integer amount of ounces to change your total by
-#       it is really only ever exepected to use negatives to fix mistakes
-# the file writes like a log where the last entry is total consumed and the difference between two consecutive entries is the water consumed in that entry
-# i.e
-# 10:00:01 0 starts off at 0 in a new day
-# 10:14:21 16 drank 16 ounces of water so it goes up
-# 11:10:21 48 drank 32 more ounces of water so new total is 48
+usage() {
+    cat <<EOF
+usage: $0 [-c|r|s|u|h] [WATER]
 
-# setting up vars
-declare waterfile
-declare -i water_intake
-declare output
+Options:
+  -c, --colorize    enables tmux color options
+  -s, --symbol      enables nerdfont compaitable symbol
+  -r, --reset       reset the days water to 0
+  -u, --undo        removes the last entry
+                      can be done repeatedly
+  -h, --help        display this message
 
-curtime=$(timedatectl | grep Local | cut -d '-' -f 2-) # getting date to MM-DD HH:MM:SS TMZ
-date=$(echo $curtime | awk '{print $1}') # for filename
-time=$(echo $curtime | awk '{print $2}') # for timestamp
-
-waterfile="$HOME/.dotfiles/bin/water/waterintake/$date" # makes it easy to reset on each new day
-
-mkdir -p "$HOME/.dotfiles/bin/water/waterintake"
-
-# update func
-update() {
-    printf '%s: %s\n' "$time" "$water_intake" >> "$waterfile"
+The WATER arguement is an integer and will be added to the current total.
+If a mistake is made, -u can remove the faulty entry.
+EOF
 }
 
-# getting current water level
-get_water_intake() {
-    if [[ -f $waterfile ]] ; then
-        water_intake=$(cat $waterfile | tail -n 1 | awk '{print $2}')
+DATE=$(date +%b_%d_%y)
+TIME=$(date +%H:%M:%S)
+
+WATER_DIR="$HOME/.dotfiles/bin/water"
+WATERFILE="${WATER_DIR}/${DATE}.csv" # makes it easy to reset on each new day
+
+# make dir on fresh installs
+if [[ ! -d "${WATER_DIR}/archive" ]] ; then
+    mkdir -p "${WATER_DIR}/archive"
+fi
+
+get_current_amt() {
+    # gets the current water intake
+
+    if [[ ! -f "$WATERFILE" ]] ; then
+        # no waterfile
+
+        # archiving old file
+        mv *.csv ${WATER_DIR}/archive
+        # creating new file for the day
+        printf 'Time, Change, Running Total\n' > "$WATERFILE"
+        printf '%s, 0, 0\n' "$TIME" >> "$WATERFILE"
     else
-        water_intake=0
+        # waterfile exists
+        CURRENT_WATER=$(cat $WATERFILE | tail -n 1 | awk '{print $3}')
     fi
 }
 
-reset_water_intake() {
-    water_intake=0
-    update
+update_water() {
+    # updates water based on $WATER_CHANGE
+    CURRENT_WATER=$(($CURRENT_WATER + $WATER_CHANGE))
+
+    # putting in file
+    printf '%s, %d, %d\n' "$TIME" $WATER_CHANGE $CURRENT_WATER >> "$WATERFILE"
 }
 
-colorize_water_intake() {
+undo_change() {
+    # removes the last entry up to the first
+
+    if [[ $(wc -l < "$WATERFILE") -gt 2 ]] ; then
+        # removing last entry
+        lastentry=$(cat "$WATERFILE" | tail -n 1)
+        ts=$(echo "$lastentry" | awk -F , '{print $1}')
+        amt=$(echo "$lastentry" | awk -F , '{print $2}')
+        prompt=$(printf 'Are you sure you want to remove the %d fl oz added at %s?(y/n)\n' $amt "$ts")
+        read -p "$prompt" -n 1 -r
+
+        if [[ $REPLY =~ ^[Yy]$ ]] ; then
+            # remove
+            sed -i '$d' "$WATERFILE"
+        fi
+        echo ""
+        get_current_amt
+    else
+        echo "No changes to undo!"
+    fi
+}
+
+colorize() {
     # sends water intake level through conditionals to be colorized
-    dflt='#[default]'
-    if [[ $water_intake -lt 32 ]] ; then
+
+    if [[ $1 -lt 32 ]] ; then
         color='#[fg=color1]' # red
-    elif [[ $water_intake -lt 64 ]] ; then
+    elif [[ $1 -lt 64 ]] ; then
         color='#[fg=color3]' # bad yellow
-    elif [[ $water_intake -lt 96 ]] ; then
+    elif [[ $1 -lt 96 ]] ; then
         color='#[fg=color226]' # pale yellow
-    elif [[ $water_intake -lt 128 ]] ; then
+    elif [[ $1 -lt 128 ]] ; then
         color='#[fg=color10]' # light green
     else
         color='#[fg=color21]' # blue 
     fi
-    output="${color}\uf6aa ${water_intake}${dflt}"
+
+    printf '%s' "$color"
 }
 
-# checking for/creating missing files
-if [[ ! -f $waterfile ]] ; then
-    # water intake file doesn't exist
-    reset_water_intake
+print_water() {
+    # prints total
+    if [ "$COLORIZE" = true ] ; then
+        dflt="#[default]"
+        printf '%s' "$(colorize $CURRENT_WATER)"
+    fi
+
+    if [ "$SYMBOL" = true ] ; then
+        printf '%s ' $(echo -e '\uf6aa')
+    fi
+
+    printf '%d%s\n' $CURRENT_WATER "$dflt"
+}
+
+# handle long forms
+for arg in "$@"; do
+    shift
+    case "$arg" in
+        '--help')       set -- "$@" "-h"    ;;
+        '--colorize')   set -- "$@" "-c"    ;;
+        '--reset')      set -- "$@" "-r"    ;;
+        '--undo')       set -- "$@" "-u"    ;;
+        '--symbol')     set -- "$@" "-s"    ;;
+        *)              set -- "$@" "$arg"  ;;
+    esac
+done
+
+get_current_amt
+
+# parsing args
+while getopts "hcrsu" opt ; do
+    case "$opt" in 
+        'h' )
+            usage
+            exit 0
+            ;;
+        'c' )
+            COLORIZE=true
+            ;;
+        's' )
+            SYMBOL=true
+            ;;
+        'u' )
+            undo_change
+            ;;
+        'r' )
+            reset_water
+            ;;
+        '?' )
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+WATER_CHANGE=$1
+if [[ ! -z "$WATER_CHANGE" ]] ; then
+    # prevent empty/0 updates
+    update_water
 fi
 
-# evaluating arguements
-get_water_intake
-if [[ -z $1 ]] ; then
-    colorize_water_intake # optional color codes based on total consumption
-    echo -e $output # no args is basic echo
-else
-    water_intake="$((water_intake + $1))" # provided value to inc/dec water intake by
-    update
-fi
+print_water
