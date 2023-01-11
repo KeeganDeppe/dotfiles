@@ -1,28 +1,152 @@
 #!/usr/bin/env bash
 
-set -e
+#set -e
 
 usage() {
     # basic usage statement
     cat <<EOF
-Usage: bb [-s|f|h|r [option]]
+Usage: bb [-c|f|s|h|r [option]]
 
 Queries Bluebikes API to get recent bike status
 
 Options:
+  -c, --colorize        adds tmux color options
+  -f, --force           force refreshes bb data
   -s, --search          pulls up a searchable fzf menu to update
                           displayed station
-  -r, --rename[=NAME]   rename the currently selected station
+  -r, --rename[=NAME]   rename the current station
                           stored in data/alias.json
                           if called without an arguement resets to default
   -h, --help            display this message
 EOF
 }
 
+# setting up vars
+TIMEOUT=60 # interval we request bike information at (s)
+WORKINGDIR="$HOME/.dotfiles/bin/bluebikes"
+
+# api
+BB_API="https://gbfs.bluebikes.com/gbfs/en/station_status.json"
+
+# allows customizing search window or dropping in dmenu
+SEARCH="fzf-tmux --layout=reverse -p 50%,50% --border"
+
+# create directory on fresh installs
+if [[ ! -d "$WORKINGDIR/data/status" ]] ; then
+    mkdir -p "$WORKINGDIR/data/status"
+fi
+
+# creating station alias list on fresh installs
+if [[ ! -e "$WORKINGDIR/data/alias.json" ]] ; then
+    starter_json=$(printf '{ "stations": [] }' | gojq '.')
+    echo "$starter_json" > "$WORKINGDIR/data/alias.json"
+fi
+
+# getting station
+if [[ -e "$WORKINGDIR/data/.station" ]] ; then
+    # if file exists
+    source "$WORKINGDIR/data/.station"
+fi
+
+get_station_info() {
+    # sets $BIKES and $DOCKS based on $STATIONID
+    
+    # checks that $STATIONID is set
+    if [[ -z "$STATIONID" ]] ; then
+        printf 'Please set a station with bb -s' >&2
+        exit 1
+    fi
+
+    # uses $UPDATE set based on update check 
+    if [ "$UPDATE" = true ] ; then
+        # getting new station info
+
+        STATION_INFO=$(curl --silent -fL $BB_API | gojq --arg id $STATIONID '.data.stations[] | select( .station_id == $id)' 2>/dev/null)
+
+        if [[ -z "$STATION_INFO" ]] ; then
+            printf 'Error retrieving station info! Check your connection' >&2
+            exit 1
+        fi
+
+        # set vars
+        BIKES=$(echo "$STATION_INFO" | gojq '.num_bikes_available')
+        DOCKS=$(echo "$STATION_INFO" | gojq '.num_docks_available')
+
+
+        EXPIRATION=$(($(date +%s) + $TIMEOUT))
+
+        # creating info file
+        printf 'BIKES=%d\nDOCKS=%d\n' $BIKES $DOCKS > "$WORKINGDIR/data/status/$EXPIRATION"
+    else
+        # grab existing data
+
+        source $WORKINGDIR/data/status/*
+    fi
+}
+
+check_update() {
+    # sets $UPDATE if needed
+    file_expr=$(ls "$WORKINGDIR/data/status" | grep .json | awk -F . '{print $1}')    
+
+    if [[ $(date +%s) -gt $file_expr ]] ; then
+        # out of date
+        UPDATE=true
+
+        # cleaning old info
+        rm ${WORKINGDIR}/data/status/*.json 2> /dev/null
+    fi
+}
+
+set_station_alias() {
+    # sets $ALIAS for $STATION_ID
+
+    if [[ -z "$STATIONID" ]] ; then
+        # no station id
+        printf 'No Station set to change name for!\nPlease run bb -s to set a station' >&2
+        exit 1
+    fi
+
+    #aliases=$(cat "$WORKINGDIR/data/alias.json") # alias json
+    ALIAS_FILE="$WORKINGDIR/data/alias.json"
+
+    # fmtting
+    FMT_ALIAS=$(printf '"%s"' $(echo $ALIAS | tr -d '"'))
+    FMT_STATIONID=$(printf '"%d"' $STATIONID)
+
+    OUT=$(cat "$ALIAS_FILE" | gojq ".$FMT_STATIONID |= $FMT_ALIAS")
+    echo "$OUT" > "$ALIAS_FILE"
+
+    printf 'Updated alias to %s\n' "$ALIAS"
+
+}
+
+
+update_station() {
+    # provides a gui to update the station to watch
+    STATIONS=$(curl --silent -fL https://gbfs.bluebikes.com/gbfs/en/station_information.json | gojq '.data.stations[]')
+
+    if [[ -z "$STATIONS" ]] ; then
+        printf 'Error retrieving station info! Check your connection' >&2
+        exit 1
+    fi
+
+    # prompt user to search
+    NEW_STATION=$(echo "$STATIONS" | gojq '.name' | tr -d '"' | eval "$SEARCH")
+    if [[ -z "$NEW_STATION" ]] ; then
+        exit 0
+    fi
+
+    # number correlating to selected name
+    STATIONID=$(echo "$STATIONS"| gojq --arg name "$NEW_STATION" '. | select( .name == $name) | .station_id' | tr -d '"') # trim quotes
+    # setting data/.station file
+    output=$(printf 'STATIONID=%s\nSTATION_NAME="%s"\n' "$STATIONID" "$NEW_STATION")
+    echo "$output" > "$WORKINGDIR/data/.station"
+}
+
 colorize() {
-    # sets $COLOR to value set in $COLORIZE
-    #echo $COLORIZE
-    case "$COLORIZE" in
+    # colorizes $BIKES and $DOCKS for tmux
+
+    case $1 in
         [0-2])
             clr='#[fg=color1]' # red
             ;;
@@ -33,170 +157,40 @@ colorize() {
             clr='#[fg=color34]' # green
             ;;
     esac
-    COLOR="$clr$COLORIZE"
-}
-    
-
-# constants
-timeout=60 # interval we request bike information at
-WORKINGDIR="$HOME/.dotfiles/bin/bluebikes"
-LOG=$(printf '%s/%s.log' "$WORKINGDIR/data" $(date +%m-%d))
-
-# create directory on fresh installs
-if [[ ! -d "$WORKINGDIR/data/status" ]] ; then
-    mkdir -p "$WORKINGDIR/data/status"
-fi
-# create log
-if [[ ! -f $LOG ]] ; then
-    touch $LOG
-fi
-
-if [[ ! -e "$WORKINGDIR/data/alias.json" ]] ; then
-    starter_json=$(printf '{ "stations": [] }' | gojq '.')
-    echo "$starter_json" > "$WORKINGDIR/data/alias.json"
-fi
-
-# finding station id
-if [[ -e "$WORKINGDIR/data/.station" ]] ; then
-    # if file exists
-    source "$WORKINGDIR/data/.station"
-fi
-
-# setting time for expiration
-TIME=$(date +%s)
-# allows customizing search window or dropping in dmenu
-SEARCH="fzf-tmux --layout=reverse -p 50%,50% --border" # fzf window will float in tmux
-
-
-get_station_info() {
-    if [[ -z "$STATIONID" ]] ; then
-        printf 'Please set a station with bb -s' >&2
-        exit 1
-    fi
-    
-    # if $UPDATE cleans folder and returns most recent info for $STATION_ID
-    if $UPDATE ; then
-        printf '%s: %s\n' $(date +%H:%M:%S) "updated station status" >> $LOG
-        BB_STATUS=$(curl --silent -fL https://gbfs.bluebikes.com/gbfs/en/station_status.json | gojq '.data')
-        EXPIRATION=$(($TIME + $timeout)) # sets expiration to be in 120 seconds
-        echo "$BB_STATUS" > "$WORKINGDIR/data/status/$EXPIRATION.json"
-    else
-        BB_STATUS=$(cat "$WORKINGDIR/data/status/"*.json | gojq '.data') # getting status from file
-    fi
-    # get relevant station info and set vars
-    BIKES=$(echo "$BB_STATUS" | gojq --arg id $STATIONID '.stations[] | select( .station_id == $id ) | .num_bikes_available' 2>/dev/null)
-    DOCKS=$(echo "$BB_STATUS" | gojq --arg id $STATIONID '.stations[] | select( .station_id == $id ) | .num_docks_available' 2>/dev/null)
-    #echo "$BIKES" "$DOCKS"
+    printf '%s%d' "$clr" $1
 }
 
-check_update() {
-    # sets $UPDATE to bool
-    lst="$WORKINGDIR/data/status/*"
-    if ls $lst 1>/dev/null 2>&1 ; then
-        # file exists
-        printf '%s: %s\n' $(date +%H:%M:%S) "found status file" >> $LOG
-        OLD_EXPIRATION=$(ls "$WORKINGDIR/data/status" | tr -d '.json' | sort -n | tail -n 1) # gets latest file
-        if [[ $OLD_EXPIRATION -lt $TIME ]] ; then
-            # file is expired
-            printf '%s: %s\n' $(date +%H:%M:%S) "removing old status files" >> $LOG
-            rm "$WORKINGDIR/"data/status/*.json
-            UPDATE=true
-        fi
-    else
-        UPDATE=true
-    fi
-}
-
-
-update_station() {
-    # provides a gui to update the station to watch
-    printf '%s: %s\n' $(date +%H:%M:%S) "updating station to watch" >> $LOG
-    STATIONS=$(curl --silent -fL https://gbfs.bluebikes.com/gbfs/en/station_information.json | gojq '.data')
-    if [[ -z "$STATIONS" ]] ; then
-        printf 'Error retrieving station info! Check your connection' >&2
-        exit 1
-    fi
-
-    # all associated data for the specific ids
-    condensed=$(echo "$STATIONS" | gojq '[.stations[] | {name: .name, id: .station_id} ]') # [{ name:, id: }, ...]
-    # prompt user to search
-    station_list=$(echo "$condensed" | gojq '.[].name' | tr -d '"' )
-    new_station=$(echo "$station_list" | eval "$SEARCH")
-    if [[ -z "$new_station" ]] ; then
-        exit 0
-    fi
-    # number correlating to selected name
-    STATIONID=$(echo "$condensed"| gojq --arg name "$new_station" '.[] | select( .name == $name) | .id' | tr -d '"') # trim quotes
-    # setting data/.station file
-    output=$(printf 'STATIONID=%s\nSTATION_NAME="%s"\n' "$STATIONID" "$new_station")
-    echo "$output" > "$WORKINGDIR/data/.station"
-#    echo "$output"
-}
-
-
-output_status() {
-    # reads $OUTPUT and the Index value
+print_status() {
+    # prints
     get_station_info # sets $DOCKS $BIKES and $STATIONID
-    NAME="$STATION_NAME"
+
     if [[ -e "$WORKINGDIR/data/alias.json" ]] ; then
-        alias=$(cat "$WORKINGDIR/data/alias.json" | gojq --arg id "$STATIONID" '.stations.[] | select(.id == $id) | .alias')
-        if [[ ! -z "$alias" ]] ; then
-            NAME="$alias"
+        FMT_STATIONID=$(printf '"%d"' $STATIONID)
+        ALIAS=$(cat "$WORKINGDIR/data/alias.json" | gojq ".$FMT_STATIONID" | tr -d '"')
+        if [[ ! -z "$ALIAS" ]] ; then
+            STATION_NAME="$ALIAS"
         fi
     fi
 
-    COLORIZE="$BIKES"
-    colorize
-    echo "$BIKES $COLOR $clr $COLORIZE"
-    BIKES="$COLOR"
+    DEFAULT=""
 
-    COLORIZE="$DOCKS"
-    colorize
-    DOCKS="$COLOR"
-    echo "$DOCKS $COLOR $clr $COLORIZE"
-    printf '%s   %s  #[default] %s' $BIKES $DOCKS "$(echo "$NAME" | tr -d '"')"
+    if [[ "$COLORIZE" = true ]] ; then
+        # adding tmux colors
+        DEFAULT="#[default]"
+
+        BIKES=$(colorize $BIKES)
+        DOCKS=$(colorize $DOCKS)
+    fi
+    printf '%s   %s  %s%s' $BIKES $DOCKS "$DEFAULT" "$STATION_NAME"
 }
 
-set_station_alias() {
-    # sets $ALIAS for $STATION_ID
 
-    if [[ -z "$STATIONID" ]] ; then
-        # no station id
-        printf 'No Station set to change name for\nPlease run bb -s to set a station' >&2
-        exit 1
-    fi
-
-    aliases=$(cat "$WORKINGDIR/data/alias.json") # alias json
-
-    if [[ -z "$ALIAS" ]] ; then
-        # no arguement for rename, clearing
-        exists=$(echo "$aliases" | gojq --arg id "$STATIONID" '.stations.[] | select(.id == $id)') # will get an alias for the id
-        if [[ ! -z "$exists" ]] ; then
-            # alias exists wipe it
-            aliases=$(gojq --arg id "$STATIONID" '.stations |= [ .[] | select(.id != $id)]' <<<"$aliases")
-            echo "$aliases" > "$WORKINGDIR/data/alias.json"
-        fi
-    else
-        # rename to $ALIAS
-        exists=$(echo "$aliases" | gojq --arg id "$STATIONID" '.stations.[] | select(.id == $id)') # will get an alias for the id
-        if [[ -z "$exists" ]]; then
-            # create entry
-            entryjson=$(printf '{"name": "%s", "id": "%s", "alias": "%s"}' "$STATION_NAME" "$STATIONID" "$ALIAS" | gojq '.')
-            aliases=$(gojq --argjson entry "$entryjson" '.stations |= . + [$entry]' <<<"$aliases")
-        else
-            # update entry
-
-            aliases=$(echo "$aliases" | gojq --arg id "$STATIONID" --arg als "$ALIAS" '.stations |= [ .[] | select(.id == $id) | .alias |= $als]')
-
-        fi
-        echo "$aliases" > "$WORKINGDIR/data/alias.json"
-    fi
-}
+# always check/clean status
+check_update
 
 if [[ $# -eq 0 ]] ; then
-    # no args passed
-    check_update
-    output_status
+    # no args passed, default to print
+    print_status
 fi
 
 while [[ $# -gt 0 ]] ; do
@@ -210,14 +204,17 @@ while [[ $# -gt 0 ]] ; do
             update_station
             ;;
         -f | --force)
-            # force reload bike status
             UPDATE=true
             output_status
             ;;
         -r | --rename)
-            ALIAS="$2"
-            set_station_alias # arguement might be in $2
-            exit 0 # ensure we exit
+            shift
+            ALIAS="$1"
+            set_station_alias
+            ;;
+        -c | --colorize)
+            COLORIZE=true
+            print_status
             ;;
         *)
             echo "Error: bb" >&2
@@ -227,5 +224,3 @@ while [[ $# -gt 0 ]] ; do
     esac
     shift # shift over the args before loop
 done
-
-# any other case would throw an error in the while loop as an unrecognized arguement
