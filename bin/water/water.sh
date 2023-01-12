@@ -80,17 +80,25 @@ check_reminder() {
                 goal=$(( ($GOAL_AMT * ($cur_indx + 1)) / ${#GOALS[@]}))
 
                 fmt_time=$(date -d "${GOALS[$cur_indx]}" "+%l:%M %P")
-                rem_info=$(printf 'You have only drank %d fl. oz. while your goal is to drink %d fl. oz. by %s!\n\nThis reminder will reappear in %d minutes unless you consume fluids!'\
-                    $CURRENT_WATER $goal "$fmt_time" $(($SNOOZE/60)))
+                rem_info=$(printf 'You have only drank %d fl. oz. while your goal is to drink %d fl. oz. by %s!\n\nThis reminder will reappear in %d minutes unless you consume fluids!\n\nOr, mute this reminder until tomorrow' $CURRENT_WATER $goal "$fmt_time" $(($SNOOZE/60)))
                 tmux display-popup -E\
                     dialog\
                     --title 'DEHYDRATION ALERT'\
-                    --ok-label 'Dismiss'\
-                    --msgbox \
+                    --yes-label 'Dismiss'\
+                    --no-label 'Mute'\
+                    --yesno \
                     "$rem_info" 0 0
 
+                # check for mute
+                if [[ $? == 1 ]] ; then
+                    # muted until tomorrow
+                    TTS=$(date -d "tomorrow 00:00:00" +%s)
+                else 
+                    TTS=$(( $(date +%s) + $SNOOZE))
+                fi
+
                 # update last_reminder
-                printf 'REMINDER_SNOOZE=%d\n' $(($(date +%s) + $SNOOZE)) > "$WATER_DIR/.reminder"
+                printf 'REMINDER_SNOOZE=%d\n' $TTS > "$WATER_DIR/.reminder"
             fi
         fi
     fi
