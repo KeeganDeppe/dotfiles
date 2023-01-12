@@ -4,7 +4,7 @@
 
 usage() {
     cat <<EOF
-usage: $0 [-c|f|s|h|r [option]]
+usage: $0 [-c][-f][-s][-h][-r [option]]
 
 Queries Bluebikes API to get recent bike status
 
