@@ -1,8 +1,11 @@
 tmux/resurrect
 tmux/plugins
 !tmux/plugins/tpm
+
 bin/water/archive
 bin/water/*.csv
+bin/water/.reminder
+
 bin/weather/.env*
 *.swp
 bin/startup/*.json
